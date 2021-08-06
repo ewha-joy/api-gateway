@@ -1,0 +1,397 @@
+server:
+  port: 30030
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://127.0.0.1:30090/eureka
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, httptrace, busrefresh
+
+spring:
+  application:
+    name: apigateway-service
+  rabbitmq:
+    host: 101.101.218.57
+    post: 5672
+    username: root
+    password: joyjoy1886*
+  sleuth:
+    sampler:
+      probability: 1.0
+  zipkin:
+    base-url: http://49.50.173.118:9411/
+  cloud:
+    gateway:
+      routes:
+        - id: NFT-node-service
+          uri: lb://NFT-NODE-SERVICE
+          predicates:
+            - Path=/NFT-node-service/**
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/actuator/**
+            - Method=GET,POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/actuator/**
+            - Method=GET,POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/webtoon-service/(?<segment>.*), /$\{segment}
+        - id: cash-service
+          uri: lb://CASH-SERVICE
+          predicates:
+            - Path=/cash-service/actuator/**
+            - Method=GET,POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/cash-service/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/signin
+          filters:
+            - RemoveRequestHeader=Cookie
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/welcome
+          filters:
+            - RemoveRequestHeader=Cookie
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/accesstoken_reset
+          filters:
+            - RefreshTokenCheckingFilter
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/signup
+          filters:
+            - RemoveRequestHeader=Cookie
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/checkUsernameAvailability
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/checkEmailAvailability
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/user/**
+          filters:
+            - AuthorizationHeaderFilter
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/CheckCash/me
+          filters:
+            - AuthorizationHeaderFilter
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/SelectUser/all
+          filters:
+            - AuthorizationHeaderFilter
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/userinfoEdit/**
+          filters:
+            - AuthorizationHeaderFilter
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/deleteUser/**
+          filters:
+            - AuthorizationHeaderFilter
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/chargeCash
+          filters:
+            - AuthorizationHeaderFilter
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/rentToon
+          filters:
+            - AuthorizationHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/newAdd
+          filters:
+            - AuthorizationHeaderFilter
+            - AuthorAdminCheckHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/uploads
+          filters:
+            - AuthorizationHeaderFilter
+            - AuthorAdminCheckHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/getToon
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/getToon/me
+          filters:
+            - AuthorizationHeaderFilter
+            - AuthorAdminCheckHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/getToonById/**
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/getToonThumbnailById/**
+          filters:
+            - AuthorizationHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/deleteToonThumbnail/**
+          filters:
+            - AuthorizationHeaderFilter
+            - AuthorAdminCheckHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/deleteToon/**
+          filters:
+            - AuthorizationHeaderFilter
+            - AuthorAdminCheckHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/getToonTitle/**
+          filters:
+            - AuthorizationHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/uploadEditToon/**
+          filters:
+            - AuthorizationHeaderFilter
+            - AuthorAdminCheckHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/uploadEditToonExceptFile/**
+          filters:
+            - AuthorizationHeaderFilter
+            - AuthorAdminCheckHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/newEpi
+          filters:
+            - AuthorizationHeaderFilter
+            - AuthorAdminCheckHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/thumbnails
+          filters:
+            - AuthorizationHeaderFilter
+            - AuthorAdminCheckHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/toons
+          filters:
+            - AuthorizationHeaderFilter
+            - AuthorAdminCheckHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/getToonIdAndName
+          filters:
+            - AuthorizationHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/getEpiThumbnailById/**
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/getToonIdAndName/me
+          filters:
+            - AuthorizationHeaderFilter
+            - AuthorAdminCheckHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/getEpi/**
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/getEpiById/**
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/getEpiToon/**
+          filters:
+            - AuthorizationHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/deleteEpi/**
+          filters:
+            - AuthorizationHeaderFilter
+            - AuthorAdminCheckHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/deleteEpiThumbnail/**
+          filters:
+            - AuthorizationHeaderFilter
+            - AuthorAdminCheckHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/deleteEpiToon/**
+          filters:
+            - AuthorizationHeaderFilter
+            - AuthorAdminCheckHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/getEditEpi/**
+          filters:
+            - AuthorizationHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/uploadEditEpi/**
+          filters:
+            - AuthorizationHeaderFilter
+            - AuthorAdminCheckHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/uploadEditEpiExceptTaM/**
+          filters:
+            - AuthorizationHeaderFilter
+            - AuthorAdminCheckHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/uploadEditEpiExceptT/**
+          filters:
+            - AuthorizationHeaderFilter
+            - AuthorAdminCheckHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/uploadEditEpiExceptM/**
+          filters:
+            - AuthorizationHeaderFilter
+            - AuthorAdminCheckHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/saveComment/**
+          filters:
+            - AuthorizationHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/uploadEditComment/**
+          filters:
+            - AuthorizationHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/getComment/**
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/deleteComment/**
+          filters:
+            - AuthorizationHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/saveFav/**
+          filters:
+            - AuthorizationHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/deleteFavById/**
+          filters:
+            - AuthorizationHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/getFav/**
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/getFavById/**
+          filters:
+            - AuthorizationHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/uploadRate/**
+          filters:
+            - AuthorizationHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/fetchRate/**
+          filters:
+            - AuthorizationHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/uploadEditRate/**
+          filters:
+            - AuthorizationHeaderFilter
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/getAvgRate/**
+        - id: webtoon-service
+          uri: lb://WEBTOON-SERVICE
+          predicates:
+            - Path=/webtoon-service/deleteFav/**
+          filters:
+            - AuthorizationHeaderFilter
+        - id: cash-service
+          uri: lb://CASH-SERVICE
+          predicates:
+            - Path=/cash-service/**
+          filters:
+            - AuthorizationHeaderFilter
+  cache:
+    type: redis
+  redis:
+    host: 101.101.218.57
+    port: 6379
+    password: joyjoy1886*
+
+
